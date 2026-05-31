@@ -48,7 +48,7 @@ from agents.report_generator import ReportGeneratorAgent
 import memory as mem
 
 
-def run_pipeline(startup_idea: str) -> AgentState:
+def run_pipeline(startup_idea: str, run_id: str | None = None) -> AgentState:
     """
     Execute the full 6-agent evaluation pipeline for the given startup idea.
     Returns the final AgentState (regardless of success/failure).
@@ -80,7 +80,10 @@ def run_pipeline(startup_idea: str) -> AgentState:
     ]
 
     # ── Build initial state ───────────────────────────────────────────────────
-    state = AgentState(startup_idea=startup_idea)
+    if run_id:
+        state = AgentState(startup_idea=startup_idea, run_id=run_id)
+    else:
+        state = AgentState(startup_idea=startup_idea)
     state.mark_running()
 
     # ── Run each agent sequentially ───────────────────────────────────────────

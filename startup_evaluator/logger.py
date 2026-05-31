@@ -44,8 +44,37 @@ def setup_logging(logs_dir: Path, level: int = logging.DEBUG) -> None:
     ch.setFormatter(logging.Formatter(_LOG_FORMAT, datefmt=_DATE_FORMAT))
     root.addHandler(ch)
 
+    # ── Memory handler for Web (INFO) ────────────────────────────────────────
+    mh = MemoryLogHandler()
+    mh.setLevel(logging.INFO)
+    mh.setFormatter(logging.Formatter(_LOG_FORMAT, datefmt=_DATE_FORMAT))
+    root.addHandler(mh)
+
     _initialised = True
 
+
+import contextvars
+
+# Context variable to store current run_id
+current_run_id: contextvars.ContextVar[str | None] = contextvars.ContextVar("current_run_id", default=None)
+
+# Global store for logs: run_id -> list of log strings
+run_logs: dict[str, list[str]] = {}
+
+class MemoryLogHandler(logging.Handler):
+    """Intercepts logs and stores them in `run_logs` mapped by `current_run_id`."""
+    def emit(self, record: logging.LogRecord) -> None:
+        run_id = current_run_id.get()
+        if not run_id:
+            return
+        
+        try:
+            msg = self.format(record)
+            if run_id not in run_logs:
+                run_logs[run_id] = []
+            run_logs[run_id].append(msg)
+        except Exception:
+            self.handleError(record)
 
 def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(name)

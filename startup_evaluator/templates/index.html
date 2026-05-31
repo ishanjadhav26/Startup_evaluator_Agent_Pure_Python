@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Evaluator AI</title>
+    <!-- Use Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Marked.js for parsing markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="container">
+        <header class="glass-panel">
+            <h1>Startup Evaluator <span>AI</span></h1>
+            <p>An intelligent agent swarm that researches, analyzes, and evaluates your startup ideas.</p>
+        </header>
+
+        <main>
+            <section class="input-section glass-panel">
+                <form id="evaluation-form">
+                    <div class="input-group">
+                        <label for="startup-idea">What is your startup idea?</label>
+                        <textarea id="startup-idea" placeholder="e.g. AI-powered interview preparation platform for college students..." required></textarea>
+                    </div>
+                    <button type="submit" id="submit-btn">
+                        <span class="btn-text">Evaluate Idea</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                </form>
+            </section>
+
+            <section id="progress-section" class="glass-panel hidden">
+                <div class="section-header">
+                    <h2>Live Working Console</h2>
+                    <span id="status-badge" class="badge running">Running...</span>
+                </div>
+                <div class="terminal" id="terminal-output">
+                    <!-- Logs will be appended here -->
+                </div>
+            </section>
+
+            <section id="report-section" class="glass-panel hidden">
+                <h2>Evaluation Report</h2>
+                <div id="report-content" class="markdown-body">
+                    <!-- Markdown will be rendered here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
