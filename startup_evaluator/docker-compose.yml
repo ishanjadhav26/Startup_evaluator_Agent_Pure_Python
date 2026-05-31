@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  startup-evaluator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+
+    image: startup-evaluator:latest
+    container_name: startup-evaluator
+
+    # ── API keys (copy .env.example → .env and fill in) ───────────────────
+    env_file:
+      - .env
+
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODEL_NAME=${MODEL_NAME:-gpt-4o-mini}
+      - MAX_RETRIES=${MAX_RETRIES:-3}
+      - TAVILY_MAX_RESULTS=${TAVILY_MAX_RESULTS:-5}
+
+    # ── Pass startup idea as the container command ────────────────────────
+    # Override at runtime:
+    #   docker compose run startup-evaluator "Your startup idea here"
+    command: ["AI Interview Preparation Platform for College Students"]
+
+    # ── Persistent volumes: reports, logs, memory survive container restarts
+    volumes:
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+      - ./memory:/app/memory
+
+    # ── Resource limits ───────────────────────────────────────────────────
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+    restart: "no"   # pipeline runs once and exits
