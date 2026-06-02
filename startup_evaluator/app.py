@@ -1,4 +1,4 @@
-import asyncio
+import contextvars
 import threading
 import uuid
 import json
@@ -27,21 +27,27 @@ class EvaluationRequest(BaseModel):
     idea: str
 
 def execute_pipeline(idea: str, run_id: str):
-    # Set the contextvar for this thread so the memory logger can capture logs
-    current_run_id.set(run_id)
-    try:
-        state = run_pipeline(idea, run_id=run_id)
-        evaluations[run_id] = {
-            "status": state.status,
-            "report_path": state.report_path,
-            "error": state.error
-        }
-    except Exception as e:
-        evaluations[run_id] = {
-            "status": "failed",
-            "report_path": None,
-            "error": str(e)
-        }
+    """Run the pipeline inside a copied context so ContextVar is visible to the log handler."""
+    def _run():
+        # Set the run_id inside this thread's context copy
+        current_run_id.set(run_id)
+        try:
+            state = run_pipeline(idea, run_id=run_id)
+            evaluations[run_id] = {
+                "status": state.status,
+                "report_path": state.report_path,
+                "error": state.error
+            }
+        except Exception as e:
+            evaluations[run_id] = {
+                "status": "failed",
+                "report_path": None,
+                "error": str(e)
+            }
+
+    # Copy context from the calling thread and run inside it
+    ctx = contextvars.copy_context()
+    ctx.run(_run)
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):

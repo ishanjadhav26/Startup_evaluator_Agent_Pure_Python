@@ -24,7 +24,7 @@ class Config:
 
     # ── Model ────────────────────────────────────────────────────────────────
     model_name: str = field(
-        default_factory=lambda: os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
+        default_factory=lambda: os.getenv("MODEL_NAME", "llama-3.1-8b-instant")
     )
     temperature: float = field(
         default_factory=lambda: float(os.getenv("TEMPERATURE", "0.3"))
