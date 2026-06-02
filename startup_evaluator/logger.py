@@ -8,8 +8,13 @@ Configures a structured logger that writes to:
 
 import logging
 import sys
+import io
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+
+# Force UTF-8 output on Windows to avoid UnicodeEncodeError with special chars (✔ ✘ etc.)
+if hasattr(sys.stdout, "buffer"):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 
 _LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)-25s | %(message)s"
