@@ -51,7 +51,7 @@ def execute_pipeline(idea: str, run_id: str):
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 @app.post("/api/evaluate")
 async def evaluate(req: EvaluationRequest, background_tasks: BackgroundTasks):
